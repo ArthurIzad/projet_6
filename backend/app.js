@@ -2,14 +2,14 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-
+const path = require('path')
 
 const stuffRoutes = require('./routes/stuff')
 const userRoutes = require('./routes/user')
 
-mongoose.connect("mongodb+srv://arthurizad:Erb75dj!fj39ss?bkofH3B3!9gjHk75@cluster0.z1ltn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-  .then(() => console.log('connexion mongodb réussi'))
-  .catch(() => console.log('connexion a mongodb echoué'))
+mongoose.connect("mongodb+srv://arthurizad:Wasabi56100!@cluster0.z1ltn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+  .then(() => console.log('connexion à mongodb réussie'))
+  .catch(() => console.log('connexion a mongodb echouée'))
 app.use(express.json())
 
 app.use((req, res, next) => {
@@ -22,8 +22,11 @@ app.use((req, res, next) => {
 
 
 app.use(bodyParser.json())
+// app.use(express.json())
 
-app.use('/api/stuff', stuffRoutes)
+
+app.use('/api/books', stuffRoutes)
 app.use('/api/auth', userRoutes)
+app.use('/images', express.static(path.join(__dirname, 'images')))
 
 module.exports = app

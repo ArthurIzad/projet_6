@@ -37,16 +37,17 @@ exports.login = (req, res, next) => {
                                     'RANDOM_TOKEN_SECRET',
                                     {expiresIn: '24h'}
                                 )
+                                
                             })
                         }
                     })
                     .catch(error =>{
-                        res.status(500).json({error})
+                        res.status(500).json({error : error + " controller user 1"})
                     })
             }
         })
         .catch(error => {
-            res.status(500).json({error})
+            res.status(500).json({error: error + " controller user 2"})
         })
 }
 
