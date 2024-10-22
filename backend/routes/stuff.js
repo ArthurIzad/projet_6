@@ -1,14 +1,20 @@
 const express = require('express')
 const auth = require('../middleware/auth')
-const router = express.Router()
 const stuffCtrl = require('../controllers/stuff')
 const multer = require('../middleware/multer-config')
 
-router.get('/', stuffCtrl.getAllStuff)
+const router = express.Router()
+
+
+router.get('/', stuffCtrl.getAllBook)
+router.get('/:id', stuffCtrl.getOneBook)
+// router.get('/bestrating', stuffCtrl.XXXXXXXXX) <- renvoie les 3 livres les mieux notés.
 router.post('/', auth, multer, stuffCtrl.createBook)
-router.get('/:id', auth, stuffCtrl.getOneBook)
 router.put('/:id', auth, multer, stuffCtrl.modifyBook)
 router.delete('/:id', auth, stuffCtrl.deleteBook)
+
+router.post('/:id/rating', auth, stuffCtrl.addRating) // sert a noter les bouquins d'un autre user
+
 
 
 module.exports = router
