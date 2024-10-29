@@ -25,7 +25,6 @@ exports.getOneBook = (req, res, next) => {
   Book.findOne({_id: req.params.id})
   .then(
     (book) => {
-      // console.log(book)
       res.status(200).json(book)
     }
   ).catch(
@@ -35,13 +34,6 @@ exports.getOneBook = (req, res, next) => {
       })
     }
   )
-  // Book.findOne({averageRating : 5})
-  // .then((book) =>{
-  //   console.log(book)
-  // })
-  // .catch((error) =>{
-  //   res.status(500).json({error: error + ', erreur dans la récupération average rating'})
-  // })
 }
 
 
@@ -127,72 +119,62 @@ exports.addRating = (req, res, next) => {
           {userId: req.body.userId,
           grade: req.body.rating,}
         )
-        console.log(req.file)
+        // au dessus, ok
+
+
+        // console.log(...req.body)
         // console.log(book.ratings)
         let NewAverageRating = 0
-        let list = [3,54]
         // console.log(book.ratings[0].grade)
         // console.log(typeof book.ratings)
         let size = Object.keys(book.ratings).length
-        console.log(size)
+        // console.log(size)
 
         for(let i =0; i<size; i++){
           // list = list.push(book.ratings[i].grade)
           NewAverageRating += book.ratings[i].grade
         }
         NewAverageRating = NewAverageRating/ size
-        console.log(NewAverageRating)
+        // console.log(NewAverageRating)
         // book.save()
-        console.log('1')
+        // console.log('1')
 
-        Book.updateOne({_id: req.params.id}, {...bookObject, averageRating: NewAverageRating})
-          .then(() =>{
-            console.log('2')
-            console.log(book)
-          })
-          .catch((error) =>{
-            res.status(500).json({error: error + ', erreur dans le calcul'})
-          })
+        // Book.updateOne({_id: req.params.id}, {...bookObject, averageRating: NewAverageRating})
+        //   .then(() =>{
+        //     console.log('2')
+        //     console.log(book)
+        //   })
+        //   .catch((error) =>{
+        //     res.status(500).json({error: error + ', erreur dans le calcul'})
+        //   })
       }
     })
     .catch((error) =>{
       res.status(500).json({error: error + ', erreur dans la notation'})
     })
-
-    // Book.updateOne({_id: req.params.id})
-    //   .then(() =>{
-    //     console.log("entrée calcul")
-    //     let NewAverageRating = 0
-    //     let list = []
-    //     for(let i =0; i<book.ratings.lenght; i++){
-    //       list.push(book.ratings[i].grade)
-    //     }
-    //     console.log(list)
-
-
-
-
-
-    //   })
-    //   .catch((error) =>{
-    //     res.status(500).json({error: error + ', erreur dans le calcul'})
-    //   })
 }
+
+
+
+
+
 
 
 exports.bestrating = (req, res, next) => {
   console.log('bestrating')
-  let n = 0
-  // while (n<3){
-  //   Book.findOne()
-  // }
+  console.log(Book)
   
-  // Book.findOne(book.averageRating === 5) // sort
-  //   .then(() =>{
-  //     console.log(book)
-  //   })
-  //   .catch((error) =>{
-  //     res.status(500).json({error: error + ', erreur dans la récupération average rating'})
-  //   })
-
+  Book.find().then(
+    (book) => {
+      let sortBook = book.sort((a, b) => {
+        return(b.averageRating - a.averageRating)
+      })
+      let bestBook = sortBook.slice(0,3) // pourquoi que 3 entrées et pas 4 ?
+      res.status(200).json(bestBook)
+  })
+  .catch((error) => {
+    res.status(400).json({
+      error: error + `, controller, bestrating`
+    })
+  })
 }

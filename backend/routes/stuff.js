@@ -5,7 +5,7 @@ const multer = require('../middleware/multer-config')
 
 const router = express.Router()
 
-router.get('/', stuffCtrl.getAllBook)
+router.get('/', stuffCtrl.getAllBook) // renvoie tous les livres de la base de donnée
 router.get('/bestrating', stuffCtrl.bestrating) // renvoie les 3 livres les mieux notés.
 router.get('/:id', stuffCtrl.getOneBook)
 router.post('/', auth, multer, stuffCtrl.createBook)
