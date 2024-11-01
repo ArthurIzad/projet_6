@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const path = require('path')
 
-const stuffRoutes = require('./routes/stuff')
+const bookRoutes = require('./routes/book')
 const userRoutes = require('./routes/user')
 
 mongoose.connect("mongodb+srv://arthurizad:Wasabi56100!@cluster0.z1ltn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
@@ -25,7 +25,7 @@ app.use(bodyParser.json())
 app.use(express.json())
 
 
-app.use('/api/books', stuffRoutes)
+app.use('/api/books', bookRoutes)
 app.use('/api/auth', userRoutes)
 app.use('/images', express.static(path.join(__dirname, 'images')))
 

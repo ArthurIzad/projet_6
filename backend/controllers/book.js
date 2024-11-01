@@ -3,7 +3,6 @@ const fs = require('fs')
 
 
 exports.createBook = (req, res, next) => {
-  console.log("createbook")
   const bookObject = JSON.parse(req.body.book)
   delete bookObject._id
   delete bookObject._userId
@@ -21,7 +20,6 @@ exports.createBook = (req, res, next) => {
 
 
 exports.getOneBook = (req, res, next) => {
-  console.log("getonebook")
   Book.findOne({_id: req.params.id})
   .then(
     (book) => {
@@ -40,7 +38,6 @@ exports.getOneBook = (req, res, next) => {
 
 
 exports.modifyBook = (req, res, next) => {
-  console.log("modify")
   const bookObject = req.file ? {
     ...JSON.parse(req.body.book),
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -64,7 +61,6 @@ exports.modifyBook = (req, res, next) => {
 
 
 exports.deleteBook = (req, res, next) => {
-  console.log("delete")
 
   Book.findOne({_id: req.params.id})
     .then(book =>{
@@ -85,7 +81,6 @@ exports.deleteBook = (req, res, next) => {
 }
 
 exports.getAllBook = (req, res, next) => {
-  console.log("getallbook")
 
   Book.find().then(
     (books) => {
@@ -100,53 +95,38 @@ exports.getAllBook = (req, res, next) => {
 
 
 
-
-
-
-
 exports.addRating = (req, res, next) => {
-  console.log('addRating')
   Book.findOne({_id: req.params.id})
     .then((book) =>{
+
       const newRating = req.body
       const actualRatings = book.ratings
       const found = actualRatings.find((element) => element === req.body.userId)
+
       if(found === newRating){
         res.status(403).json({message: 'Vous avez déjà noté ce livre'})
       }else{
-        console.log('vous pouvez noter ce livre')
         book.ratings.push(
           {userId: req.body.userId,
           grade: req.body.rating,}
         )
-        // au dessus, ok
-
-
-        // console.log(...req.body)
-        // console.log(book.ratings)
-        let NewAverageRating = 0
-        // console.log(book.ratings[0].grade)
-        // console.log(typeof book.ratings)
+        
+        let sumAverageRating = 0
         let size = Object.keys(book.ratings).length
-        // console.log(size)
 
         for(let i =0; i<size; i++){
-          // list = list.push(book.ratings[i].grade)
-          NewAverageRating += book.ratings[i].grade
+          sumAverageRating += book.ratings[i].grade
         }
-        NewAverageRating = NewAverageRating/ size
-        // console.log(NewAverageRating)
-        // book.save()
-        // console.log('1')
-
-        // Book.updateOne({_id: req.params.id}, {...bookObject, averageRating: NewAverageRating})
-        //   .then(() =>{
-        //     console.log('2')
-        //     console.log(book)
-        //   })
-        //   .catch((error) =>{
-        //     res.status(500).json({error: error + ', erreur dans le calcul'})
-        //   })
+        let NewAverageRating = Math.round(sumAverageRating/ size)
+        
+        Book.updateOne({_id: req.params.id}, {averageRating: NewAverageRating})
+          .then(() =>{
+            book.save()
+            res.status(200).json(book)
+          })
+          .catch((error) =>{
+            res.status(500).json({error: error + ', erreur dans le calcul'})
+          })
       }
     })
     .catch((error) =>{
@@ -156,20 +136,13 @@ exports.addRating = (req, res, next) => {
 
 
 
-
-
-
-
-exports.bestrating = (req, res, next) => {
-  console.log('bestrating')
-  console.log(Book)
-  
+exports.bestrating = (req, res, next) => {  
   Book.find().then(
     (book) => {
       let sortBook = book.sort((a, b) => {
         return(b.averageRating - a.averageRating)
       })
-      let bestBook = sortBook.slice(0,3) // pourquoi que 3 entrées et pas 4 ?
+      let bestBook = sortBook.slice(0,3)
       res.status(200).json(bestBook)
   })
   .catch((error) => {
